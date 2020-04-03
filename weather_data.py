@@ -8,7 +8,7 @@ class WeatherData:
     '''To access the csv file constaining WeatherData'''
     def __init__(self):
         "To perform read operation on the csv file"
-        self.filename = input("CSV file location")
+        self.filename = input("CSV file location\n")
         self.nDays = 0
         self.dataItems = []
         self.dataSize  = 0
@@ -18,13 +18,26 @@ class WeatherData:
 
     def load(self, filename):
         "Takes a string(file_name) as a parameter"
-        onfile = open(filename, mode = 'r')
+        try:
+            onfile = open(filename, mode = 'r')
+        except:
+            print("No such filename!")
+            self.__init__()
+        # skip the first line
         onfile.readline()
         for line in onfile:
             param = line.split(',')
-            if len(param) == 11:
-                dataItem = WeatherDataItem(param)
-                self.dataItems.append(dataItem)
+            try:
+                if len(param) == 11:
+                    dataItem = WeatherDataItem(param)
+                    self.dataItems.append(dataItem)
+                else:
+                    # not enough input arguments
+                    raise IndexError
+            except (IndexError, ValueError):
+                print("Data error!")
+                onfile.close()
+                self.__init__()
         onfile.close()
 
     def get_data(self, nDays):
